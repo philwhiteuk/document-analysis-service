@@ -1,7 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers.upload import router as upload_router
+
 app = FastAPI(title="Document Analysis Service")
+
+# Register routers
+app.include_router(upload_router)
 
 # Allow all origins during initial development. Adjust in production.
 app.add_middleware(

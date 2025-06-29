@@ -3,7 +3,7 @@
 Task list:
 
 - [x] 000 - Project setup and architecture planning
-- [ ] 001a - Backend API foundation and file upload endpoint
+- [x] 001a - Backend API foundation and file upload endpoint
 - [ ] 001b - Frontend application foundation and upload UI
 - [ ] 002 - Text metrics computation engine
 - [ ] 003 - Database schema and data persistence layer
