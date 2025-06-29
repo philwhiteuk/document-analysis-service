@@ -6,6 +6,7 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     POETRY_VERSION=1.7.1
 
+# Set initial workdir for dependency installation
 WORKDIR /app
 
 # Install OS deps
@@ -17,6 +18,9 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy application code
 COPY backend ./backend
+
+# Switch working directory so that `app` package is on PYTHONPATH
+WORKDIR /app/backend
 
 EXPOSE 8000
 
