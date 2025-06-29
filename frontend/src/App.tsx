@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { uploadFile } from './api';
+import Metrics from './Metrics';
 
 function App() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [metrics, setMetrics] = useState<any | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -13,6 +15,7 @@ function App() {
       setUploading(true);
       const res = await uploadFile(file);
       setMessage(`Uploaded! File ID: ${res.file_id}`);
+      setMetrics(res.metrics);
     } catch (err: any) {
       setMessage(err?.response?.data?.detail ?? 'Upload failed');
     } finally {
@@ -35,6 +38,7 @@ function App() {
         </button>
       </form>
       {message && <p className="message">{message}</p>}
+      {metrics && <Metrics metrics={metrics} />}
     </main>
   );
 }
