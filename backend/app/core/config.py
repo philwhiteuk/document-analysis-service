@@ -10,6 +10,7 @@ class Settings:
 
     UPLOAD_DIR: Path = Path(__file__).resolve().parent.parent / "uploads"
     MAX_FILE_SIZE_BYTES: int = 5 * 1024 * 1024  # 5 MB limit for text files.
+    DATABASE_URL: str = "sqlite+aiosqlite:///../document_analysis.db"
 
 
 settings = Settings()

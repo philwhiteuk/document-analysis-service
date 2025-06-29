@@ -6,9 +6,14 @@ import shutil
 import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, HTTPException, UploadFile, status, Depends
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.core.database import get_session
+from app.repositories import documents as repo
+from app.services.analysis import compute_metrics
 
 router = APIRouter(prefix="/upload", tags=["upload"])
 
@@ -16,7 +21,10 @@ ALLOWED_EXTENSIONS = {".txt"}
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def upload_file(file: UploadFile = File(...)) -> dict[str, str]:
+async def upload_file(
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_session),
+) -> dict[str, str]:
     """Upload a text file for analysis.
 
     Currently, the file is simply stored on disk and an identifier is
@@ -52,4 +60,18 @@ async def upload_file(file: UploadFile = File(...)) -> dict[str, str]:
     final_path = settings.UPLOAD_DIR / f"{file_id}{extension}"
     shutil.move(tmp_path, final_path)
 
-    return {"file_id": file_id, "filename": file.filename}
+    # Compute metrics
+    text = final_path.read_text(encoding="utf-8", errors="ignore")
+    metrics = compute_metrics(text)
+
+    # Store metadata in DB
+    await repo.create(
+        session,
+        file_id=file_id,
+        filename=file.filename,
+        path=str(final_path),
+        size_bytes=total_read,
+        metrics=metrics,
+    )
+
+    return {"file_id": file_id, "filename": file.filename, "metrics": metrics}
