@@ -21,7 +21,7 @@ Backend (requires Python 3.11):
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+cd backend && uvicorn app.main:app --reload
 ```
 
 Frontend:
