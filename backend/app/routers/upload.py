@@ -7,6 +7,7 @@ import uuid
 from pathlib import Path
 
 from fastapi import APIRouter, File, HTTPException, UploadFile, status, Depends
+from app.schemas.upload import UploadResponse
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,11 +21,11 @@ router = APIRouter(prefix="/upload", tags=["upload"])
 ALLOWED_EXTENSIONS = {".txt"}
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UploadResponse)
 async def upload_file(
     file: UploadFile = File(...),
     session: AsyncSession = Depends(get_session),
-) -> dict[str, str]:
+) -> UploadResponse:
     """Upload a text file for analysis.
 
     Currently, the file is simply stored on disk and an identifier is
@@ -43,8 +44,12 @@ async def upload_file(
     total_read = 0
     tmp_path = settings.UPLOAD_DIR / f"tmp-{uuid.uuid4().hex}"
 
+    CHUNK_SIZE = 1024 * 1024  # 1 MB
     with tmp_path.open("wb") as buffer:
-        async for chunk in file.stream():
+        while True:
+            chunk = await file.read(CHUNK_SIZE)
+            if not chunk:
+                break
             total_read += len(chunk)
             if total_read > max_size:
                 buffer.close()
@@ -74,4 +79,4 @@ async def upload_file(
         metrics=metrics,
     )
 
-    return {"file_id": file_id, "filename": file.filename, "metrics": metrics}
+    return UploadResponse(file_id=file_id, filename=file.filename, metrics=metrics)

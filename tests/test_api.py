@@ -6,6 +6,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+import pytest_asyncio
 from fastapi import status
 from httpx import AsyncClient
 
@@ -13,8 +14,8 @@ from app.main import app
 from app.core.config import settings
 
 
-@pytest.fixture(name="client")
-async def _client() -> AsyncClient:  # type: ignore[return-type]
+@pytest_asyncio.fixture(name="client")
+async def _client() -> AsyncClient:
     """Create an AsyncClient against the FastAPI app."""
     async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
@@ -28,12 +29,14 @@ def _temp_upload_dir(monkeypatch: pytest.MonkeyPatch) -> None:
         yield
 
 
+@pytest.mark.asyncio
 async def test_health(client: AsyncClient) -> None:
     resp = await client.get("/health")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {"status": "ok"}
 
 
+@pytest.mark.asyncio
 async def test_upload_and_retrieve_results(client: AsyncClient) -> None:
     # Prepare a simple text file in-memory
     text = "Hello world. This is a test file. Hello again!"

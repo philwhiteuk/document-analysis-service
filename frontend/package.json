@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest --no-watch"
   },
   "dependencies": {
     "axios": "^1.6.2",
@@ -13,6 +14,11 @@
     "react-dom": "^18.3.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.4.3",
+    "vitest": "^1.5.0",
+    "jsdom": "^24.0.0",
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "@vitejs/plugin-react": "^4.1.0",
