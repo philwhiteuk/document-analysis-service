@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface MetricsProps {
+export interface MetricsData {
   metrics: {
     total_word_count: number;
     unique_word_count: number;
@@ -8,6 +8,10 @@ interface MetricsProps {
     flesch_kincaid_grade_level: number;
     top_10_words: [string, number][];
   };
+}
+
+export interface MetricsProps {
+  metrics: MetricsData;
 }
 
 const Metrics: React.FC<MetricsProps> = ({ metrics }) => {

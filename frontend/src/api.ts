@@ -16,6 +16,11 @@ export async function uploadFile(file: File): Promise<{ file_id: string; filenam
   return data;
 }
 
+export async function getHistory(limit = 20) {
+  const { data } = await api.get(`/history/?limit=${limit}`);
+  return data;
+}
+
 export async function getResults(fileId: string) {
   const { data } = await api.get(`/results/${fileId}`);
   return data;

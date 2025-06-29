@@ -5,12 +5,14 @@ from app.core.database import init_db
 
 from app.routers.upload import router as upload_router
 from app.routers.results import router as results_router
+from app.routers.history import router as history_router
 
 app = FastAPI(title="Document Analysis Service")
 
 # Register routers
 app.include_router(upload_router)
 app.include_router(results_router)
+app.include_router(history_router)
 
 
 @app.on_event("startup")
